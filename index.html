@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Troopod × Xpresence: Shopify Website Proposal</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0D0D0F; --bg2: #141418; --bg3: #1C1C22; --bg4: #222228;
+    --accent: #8B6BF7; --accent2: #7B5CF5;
+    --accent-dim: rgba(139,107,247,0.08); --accent-border: rgba(139,107,247,0.25);
+    --text: #F2F2F4; --text2: #9090A0; --text3: #52525E;
+    --border: rgba(255,255,255,0.06); --border2: rgba(255,255,255,0.1);
+    --green: #50C878; --green-dim: rgba(80,200,120,0.1); --green-border: rgba(80,200,120,0.25);
+    --amber: #E0A94A; --amber-dim: rgba(224,169,74,0.1); --amber-border: rgba(224,169,74,0.28);
+    --radius: 12px; --radius-sm: 8px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 15px; line-height: 1.6; }
+  @media (min-width: 769px) { body { zoom: 1.05; } }
+  a { color: inherit; }
+  .mono { font-family: 'DM Mono', monospace; }
+  .shell { display: flex; min-height: 100vh; }
+
+  .sidebar { width: 240px; flex-shrink: 0; background: var(--bg2); border-right: 1px solid var(--border); position: fixed; top: 0; left: 0; height: 100vh; display: flex; flex-direction: column; z-index: 100; overflow-y: auto; transition: transform 0.25s ease; }
+  .sidebar-logo { padding: 22px 20px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+  .logo-icon { width: 30px; height: 30px; background: linear-gradient(135deg, var(--accent), var(--accent2)); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #fff; flex-shrink: 0; }
+  .logo-text { font-size: 15px; font-weight: 600; color: var(--text); letter-spacing: -0.3px; }
+  .logo-sub { font-size: 11px; color: var(--text3); margin-top: 1px; }
+  .sidebar-group-label { font-size: 10px; font-weight: 500; color: var(--text3); letter-spacing: 1.2px; text-transform: uppercase; padding: 16px 20px 6px; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 20px; cursor: pointer; font-size: 13.5px; color: var(--text2); transition: all 0.15s; border-left: 2px solid transparent; }
+  .nav-item:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+  .nav-item.active { color: var(--accent); border-left-color: var(--accent); background: var(--accent-dim); }
+  .nav-num { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text3); width: 18px; flex-shrink: 0; }
+  .nav-item.active .nav-num { color: var(--accent); opacity: 0.85; }
+  .sidebar-footer { margin-top: auto; padding: 14px 20px; border-top: 1px solid var(--border); }
+  .brand-pill { display: flex; align-items: center; gap: 8px; background: var(--accent-dim); border: 1px solid var(--accent-border); border-radius: 20px; padding: 6px 12px; font-size: 12px; color: var(--accent); }
+  .brand-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.35} }
+
+  .main { margin-left: 240px; flex: 1; min-width: 0; }
+  .topbar { position: sticky; top: 0; background: rgba(13,13,15,0.9); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); padding: 13px 40px; display: flex; align-items: center; gap: 14px; z-index: 90; width: 100%; }
+  .topbar-title { font-size: 14px; font-weight: 500; color: var(--text); }
+  .topbar-meta { font-size: 11.5px; color: var(--text3); font-family: 'DM Mono', monospace; margin-top: 1px; }
+  .status-pill { display: flex; align-items: center; gap: 6px; background: var(--amber-dim); border: 1px solid var(--amber-border); border-radius: 20px; padding: 5px 14px; font-size: 12px; color: var(--amber); font-weight: 500; white-space: nowrap; margin-left: auto; }
+  .menu-btn { display: none; background: none; border: 1px solid var(--border2); color: var(--text); border-radius: 8px; padding: 6px 10px; cursor: pointer; }
+
+  .content { padding: 44px 56px 80px; max-width: 820px; width: 100%; margin: 0 auto; }
+  .section { display: none; }
+  .section.active { display: block; }
+  .section-eyebrow { font-size: 11px; font-weight: 500; color: var(--accent); letter-spacing: 1.5px; text-transform: uppercase; font-family: 'DM Mono', monospace; margin-bottom: 8px; }
+  .section-title { font-size: 27px; font-weight: 600; color: var(--text); letter-spacing: -0.4px; line-height: 1.25; margin-bottom: 8px; }
+  .section-title em { color: var(--accent); font-style: normal; }
+  .section-sub { font-size: 15px; color: var(--text2); line-height: 1.65; max-width: 620px; margin-bottom: 24px; }
+  .block-title { font-size: 12.5px; font-weight: 600; color: var(--text); text-transform: uppercase; letter-spacing: 0.6px; margin: 26px 0 12px; display: flex; align-items: center; gap: 8px; }
+  .block-title:first-child { margin-top: 0; }
+  .block-title .dash { width: 14px; height: 1px; background: var(--accent-border); }
+  .mini-label { font-size: 10.5px; font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.6px; margin: 16px 0 8px; }
+  .mini-label:first-of-type { margin-top: 4px; }
+  .split-col h5 { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+
+  .card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 18px; margin-bottom: 8px; }
+  .card.accent-card { background: var(--accent-dim); border-color: var(--accent-border); }
+  .card.amber-card { background: var(--amber-dim); border-color: var(--amber-border); }
+  .card-label { font-size: 11.5px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 5px; }
+  .card-value { font-size: 18px; font-weight: 600; color: var(--text); letter-spacing: -0.2px; }
+  .card-sub { font-size: 12.5px; color: var(--text3); margin-top: 4px; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+
+  .stat-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; text-align: left; }
+  .stat-num { font-size: 24px; font-weight: 700; color: var(--accent); letter-spacing: -0.5px; font-family: 'DM Mono', monospace; }
+  .stat-label { font-size: 11.5px; color: var(--text3); margin-top: 3px; }
+
+  .tick-item { display: flex; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--text2); line-height: 1.55; }
+  .tick-item:last-child { border-bottom: none; }
+  .tick-mark { color: var(--accent); flex-shrink: 0; }
+  .tick-item b { color: var(--text); font-weight: 600; }
+
+  .tag { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 20px; margin-left: 6px; vertical-align: middle; }
+  .tag.green { background: var(--green-dim); color: var(--green); border: 1px solid var(--green-border); }
+  .tag.amber { background: var(--amber-dim); color: var(--amber); border: 1px solid var(--amber-border); }
+  .tag.gray { background: var(--bg4); color: var(--text3); border: 1px solid var(--border2); }
+  .tag.purple { background: var(--accent-dim); color: var(--accent); border: 1px solid var(--accent-border); }
+
+  .page-item { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 9px 12px; font-size: 12.5px; color: var(--text); display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+  .frag-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; }
+  .frag-name { font-size: 14px; font-weight: 600; color: var(--accent); margin-bottom: 3px; }
+  .frag-desc { font-size: 12.5px; color: var(--text2); line-height: 1.5; }
+
+  .cover-hero { background: linear-gradient(160deg, var(--accent-dim), transparent 70%); border: 1px solid var(--accent-border); border-radius: var(--radius); padding: 32px 28px; margin-bottom: 20px; }
+  .cover-brand { font-size: 12px; font-family: 'DM Mono', monospace; color: var(--accent); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px; }
+  .cover-title { font-size: 28px; font-weight: 700; color: var(--text); letter-spacing: -0.5px; line-height: 1.2; margin-bottom: 8px; }
+  .cover-sub { font-size: 14px; color: var(--text2); max-width: 520px; line-height: 1.6; }
+  .cover-meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 20px; }
+
+  .flow-step { display: flex; gap: 12px; margin-bottom: 2px; }
+  .flow-left { display: flex; flex-direction: column; align-items: center; }
+  .flow-dot { width: 22px; height: 22px; border-radius: 50%; background: var(--bg3); border: 1px solid var(--accent-border); color: var(--accent); font-family: 'DM Mono', monospace; font-size: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .flow-line { width: 1px; flex: 1; background: var(--border2); margin: 3px 0; min-height: 14px; }
+  .flow-body { padding-bottom: 12px; }
+  .flow-title { font-size: 13px; font-weight: 600; color: var(--text); }
+
+  .week-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 16px; margin-bottom: 6px; display: flex; align-items: center; gap: 14px; }
+  .week-tag { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--accent); width: 78px; flex-shrink: 0; }
+  .week-title { font-size: 13.5px; font-weight: 600; color: var(--text); }
+  .week-desc { font-size: 12.5px; color: var(--text2); }
+
+  /* FUNNEL */
+  .funnel { display: flex; flex-direction: column; align-items: center; margin: 4px 0 30px; }
+  .funnel-stage { box-sizing: border-box; width: 100%; background: var(--bg2); border: 1px solid var(--accent-border); border-radius: var(--radius-sm); padding: 13px 20px; text-align: center; margin: 0 auto; }
+  .funnel-stage .funnel-tag { font-family: 'DM Mono', monospace; font-size: 10.5px; color: var(--accent); letter-spacing: 0.5px; }
+  .funnel-stage .funnel-title { font-size: 13.5px; font-weight: 600; color: var(--text); margin-top: 2px; }
+  .funnel-stage .funnel-desc { font-size: 11.5px; color: var(--text3); margin-top: 3px; }
+  .funnel-stage.final { background: var(--accent-dim); border-color: var(--accent); }
+  .funnel-arrow { color: var(--text3); font-size: 10px; line-height: 1; margin: 3px 0; }
+  @media (max-width: 768px) {
+    .funnel-stage { width: 100% !important; }
+  }
+
+  .price-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 22px; margin-bottom: 10px; }
+  .price-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; }
+  .price-name { font-size: 15px; font-weight: 600; color: var(--text); }
+  .price-desc { font-size: 12.5px; color: var(--text3); margin-top: 4px; max-width: 420px; }
+  .price-val { font-family: 'DM Mono', monospace; font-size: 19px; font-weight: 600; color: var(--accent); white-space: nowrap; }
+
+  table.simple-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
+  table.simple-table th, table.simple-table td { padding: 9px 12px; font-size: 12.5px; text-align: left; border-bottom: 1px solid var(--border); color: var(--text2); }
+  table.simple-table th { color: var(--text3); font-weight: 500; text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.5px; }
+  .table-scroll { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-bottom: 8px; }
+
+  .exclusion-box { background: var(--bg2); border: 1px dashed var(--border2); border-radius: var(--radius); padding: 16px 18px; margin-top: 14px; }
+  .exclusion-box .excl-title { font-size: 11.5px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 10px; }
+  .excl-row { display: flex; gap: 8px; font-size: 12.5px; color: var(--text2); padding: 4px 0; line-height: 1.55; }
+  .excl-row .excl-mark { color: var(--text3); flex-shrink: 0; }
+
+  .term-block { margin-bottom: 18px; }
+  .term-block h4 { font-size: 11.5px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px; font-weight: 600; }
+  .term-row { display: flex; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--border); }
+  .term-row:last-child { border-bottom: none; }
+  .term-num { font-family: 'DM Mono', monospace; font-size: 11.5px; color: var(--text3); flex-shrink: 0; width: 18px; padding-top: 1px; }
+  .term-text b { color: var(--text); font-weight: 600; }
+  .term-text { font-size: 12.5px; color: var(--text2); line-height: 1.6; }
+
+  .term-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 13px 16px; }
+  .term-card .t-title { font-size: 12.5px; font-weight: 600; color: var(--text); margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+  .term-card .t-num { font-family: 'DM Mono', monospace; font-size: 10.5px; color: var(--accent); }
+  .term-card .t-desc { font-size: 11.5px; color: var(--text2); line-height: 1.55; }
+
+  .footer-note { font-size: 11.5px; color: var(--text3); text-align: center; margin-top: 40px; padding-top: 18px; border-top: 1px solid var(--border); }
+
+  .brand-link { display: flex; align-items: center; gap: 12px; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 16px; font-size: 13px; color: var(--text); text-decoration: none; transition: border-color 0.15s, color 0.15s; }
+  .brand-link:hover { border-color: var(--accent-border); }
+  .brand-link .arrow { color: var(--accent); font-size: 13px; flex-shrink: 0; margin-left: auto; }
+  .brand-badge { width: 36px; height: 36px; border-radius: 10px; background: var(--accent-dim); border: 1px solid var(--accent-border); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: var(--accent); flex-shrink: 0; letter-spacing: 0.2px; }
+  .brand-info { display: flex; flex-direction: column; min-width: 0; }
+  .brand-name { font-size: 13.5px; font-weight: 600; color: var(--text); }
+  .brand-sub { font-size: 11px; color: var(--text3); }
+  .deck-cta { display: flex; align-items: center; justify-content: space-between; gap: 16px; background: linear-gradient(135deg, var(--accent-dim), transparent); border: 1px solid var(--accent-border); border-radius: var(--radius); padding: 20px 24px; margin-bottom: 20px; flex-wrap: wrap; }
+  .deck-cta-text .card-value { font-size: 16px; margin-bottom: 2px; }
+
+  @media (max-width: 980px) { .grid-3, .grid-4, .cover-meta-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 768px) {
+    html { overflow-x: hidden; } body { overflow-x: hidden; overflow-y: visible; }
+    .sidebar { transform: translateX(-100%); width: 82vw; max-width: 300px; }
+    .sidebar.open { transform: translateX(0); }
+    .main { margin-left: 0; }
+    .menu-btn { display: block; }
+    .topbar { padding: 12px 16px; }
+    .topbar-title { font-size: 13px; }
+    .content { padding: 22px 16px 56px; }
+    .grid-2, .grid-3, .grid-4, .cover-meta-grid { grid-template-columns: 1fr; }
+    .section-title, .cover-title { font-size: 20px; }
+    .section-sub { font-size: 13.5px; }
+    .price-top { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .week-card { flex-direction: column; align-items: flex-start; gap: 2px; }
+    .week-tag { width: auto; }
+    table.simple-table th, table.simple-table td { padding: 7px 8px; font-size: 11.5px; white-space: nowrap; }
+    .stat-num { font-size: 20px; }
+    .card, .price-card, .exclusion-box, .cover-hero { padding: 14px 14px; }
+    .term-row { flex-wrap: wrap; }
+  }
+  #overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99; }
+  #overlay.open { display: block; }
+</style>
+</head>
+<body>
+
+<div id="overlay" onclick="toggleSidebar()"></div>
+
+<div class="shell">
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">T</div>
+      <div>
+        <div class="logo-text">Troopod</div>
+        <div class="logo-sub">Xpresence · Website Proposal</div>
+      </div>
+    </div>
+
+    <div class="sidebar-group-label">Overview</div>
+    <div class="nav-item active" onclick="show('s01', this)"><span class="nav-num">01</span>Summary &amp; Objectives</div>
+    <div class="nav-item" onclick="show('s02', this)"><span class="nav-num">02</span>Brand &amp; Journey</div>
+    <div class="nav-item" onclick="show('s03', this)"><span class="nav-num">03</span>Reference Analysis</div>
+
+    <div class="sidebar-group-label">Website Scope</div>
+    <div class="nav-item" onclick="show('s04', this)"><span class="nav-num">04</span>Pages &amp; Product Design</div>
+    <div class="nav-item" onclick="show('s05', this)"><span class="nav-num">05</span>Design &amp; Development</div>
+
+    <div class="sidebar-group-label">Growth &amp; Quality</div>
+    <div class="nav-item" onclick="show('s06', this)"><span class="nav-num">06</span>Trust, CRO &amp; Integrations</div>
+    <div class="nav-item" onclick="show('s07', this)"><span class="nav-num">07</span>SEO, Performance &amp; QA</div>
+
+    <div class="sidebar-group-label">Execution</div>
+    <div class="nav-item" onclick="show('s08', this)"><span class="nav-num">08</span>Timeline &amp; Deliverables</div>
+
+    <div class="sidebar-group-label">Commercial</div>
+    <div class="nav-item" onclick="show('s09', this)"><span class="nav-num">09</span>Commercial Proposal</div>
+    <div class="nav-item" onclick="show('s10', this)"><span class="nav-num">10</span>Why Troopod</div>
+    <div class="nav-item" onclick="show('s11', this)"><span class="nav-num">11</span>Terms &amp; Conditions</div>
+    <div class="nav-item" onclick="show('s12', this)"><span class="nav-num">12</span>Next Steps</div>
+
+    <div class="sidebar-footer">
+      <div class="brand-pill"><span class="brand-dot"></span>Awaiting Sign-off</div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <div>
+        <div class="topbar-title">Xpresence × Troopod</div>
+        <div class="topbar-meta">Shopify Website Proposal · Issued 10 September 2026</div>
+      </div>
+      <div class="status-pill">Valid 15 Days</div>
+    </div>
+
+    <div class="content">
+
+      <!-- 01 SUMMARY & OBJECTIVES -->
+      <div class="section active" id="s01">
+        <div class="section-eyebrow">01 · Summary &amp; Objectives</div>
+
+        <div class="cover-hero">
+          <div class="cover-brand">Shopify Website Design &amp; Development Proposal</div>
+          <div class="cover-title">Launching <em style="color:var(--accent)">Xpresence</em> on Shopify</div>
+          <p class="cover-sub">A complete D2C website for Executive Presence Learning (OPC) Pvt. Ltd.'s new fragrance brand — built to introduce Power, Focus and Warmth with a premium, trustworthy shopping experience.</p>
+          <div class="cover-meta-grid">
+            <div><div class="card-label">Prepared For</div><div class="card-value" style="font-size:14px;">Executive Presence Learning (OPC) Pvt. Ltd.</div></div>
+            <div><div class="card-label">Brand</div><div class="card-value" style="font-size:14px;">Xpresence</div></div>
+            <div><div class="card-label">Prepared By</div><div class="card-value" style="font-size:14px;">Troopod</div></div>
+            <div><div class="card-label">Project Value</div><div class="card-value" style="font-size:14px;">₹1,50,000 + GST</div></div>
+            <div><div class="card-label">Proposal Date</div><div class="card-value" style="font-size:14px;">10 September 2026</div></div>
+            <div><div class="card-label">Validity</div><div class="card-value" style="font-size:14px;">15 Days</div></div>
+          </div>
+        </div>
+
+        <div class="card accent-card" style="padding:20px 22px;margin-bottom:24px;">
+          <div class="card-label">The Brief, In One Line</div>
+          <p style="font-size:14px;color:var(--text2);line-height:1.75;">Xpresence is entering the D2C perfume market with three fragrances — <b style="color:var(--text);">Power, Focus and Warmth</b> — plus a <b style="color:var(--text);">Discovery Set</b> of 10 ml samples as an easy entry product. As a new brand with no purchase history, the site's job is to communicate what each fragrance stands for, help customers choose confidently, and build enough trust to convert a first-time visitor.</p>
+        </div>
+
+        <div class="block-title"><span class="dash"></span>Project objectives</div>
+        <div class="mini-label">Brand &amp; Trust</div>
+        <div class="grid-2">
+          <div class="tick-item" style="border:none;"><span class="tick-mark">•</span>Premium D2C identity from day one</div>
+          <div class="tick-item" style="border:none;"><span class="tick-mark">•</span>Trust-building for first-time customers</div>
+          <div class="tick-item" style="border:none;"><span class="tick-mark">•</span>Easy fragrance selection, less confusion</div>
+          <div class="tick-item" style="border:none;"><span class="tick-mark">•</span>Discovery Set as a low-risk first purchase</div>
+        </div>
+        <div class="mini-label">Experience &amp; Growth</div>
+        <div class="grid-2">
+          <div class="tick-item" style="border:none;"><span class="tick-mark">•</span>Mobile-first shopping experience</div>
+          <div class="tick-item" style="border:none;"><span class="tick-mark">•</span>Smoother Add to Cart &amp; checkout</div>
+          <div class="tick-item" style="border:none;"><span class="tick-mark">•</span>Scalable Shopify foundation</div>
+          <div class="tick-item" style="border:none;"><span class="tick-mark">•</span>Analytics for future CRO decisions</div>
+        </div>
+      </div>
+
+      <!-- 02 BRAND & JOURNEY -->
+      <div class="section" id="s02">
+        <div class="section-eyebrow">02 · Brand Challenge &amp; Customer Journey</div>
+        <h1 class="section-title">Selling <em>a feeling</em> customers can't smell</h1>
+        <p class="section-sub">Perfume is hard to sell online because customers can't physically smell it. The site does the job a store associate normally would — communicating personality, mood, occasion and trust.</p>
+
+        <div class="block-title"><span class="dash"></span>Positioning direction (tone only — not fragrance-note claims)</div>
+        <div class="grid-3">
+          <div class="frag-card"><div class="frag-name">Power</div><div class="frag-desc">A stronger, more confident presence.</div></div>
+          <div class="frag-card"><div class="frag-name">Focus</div><div class="frag-desc">A clear, composed, intentional presence.</div></div>
+          <div class="frag-card"><div class="frag-name">Warmth</div><div class="frag-desc">An approachable, welcoming presence.</div></div>
+        </div>
+        <div class="card amber-card" style="margin-top:10px;"><div class="card-sub" style="font-size:12.5px;">Actual fragrance notes, ingredients and performance claims will only go live once confirmed by Xpresence — see Section 10.</div></div>
+
+        <div class="block-title"><span class="dash"></span>Customer journey</div>
+        <div class="flow-step"><div class="flow-left"><div class="flow-dot">1</div><div class="flow-line"></div></div><div class="flow-body"><div class="flow-title">Discovers Xpresence → understands the brand idea</div></div></div>
+        <div class="flow-step"><div class="flow-left"><div class="flow-dot">2</div><div class="flow-line"></div></div><div class="flow-body"><div class="flow-title">Explores &amp; compares Power, Focus, Warmth</div></div></div>
+        <div class="flow-step"><div class="flow-left"><div class="flow-dot">3</div><div class="flow-line"></div></div><div class="flow-body"><div class="flow-title">Selects a 30 ml perfume or the Discovery Set</div></div></div>
+        <div class="flow-step"><div class="flow-left"><div class="flow-dot">4</div><div class="flow-line"></div></div><div class="flow-body"><div class="flow-title">Reviews trust info → adds to cart → checks out</div></div></div>
+        <div class="flow-step"><div class="flow-left"><div class="flow-dot">5</div></div><div class="flow-body"><div class="flow-title">Receives post-purchase communication</div></div></div>
+
+        <div class="grid-2" style="margin-top:14px;">
+          <div class="card accent-card"><div class="card-label">Path A</div><div class="card-value" style="font-size:14px;">"I know what I want"</div><div class="card-sub" style="color:var(--text2);font-size:13px;">Shop the 30 ml perfumes directly.</div></div>
+          <div class="card accent-card"><div class="card-label">Path B</div><div class="card-value" style="font-size:14px;">"I want to try all three"</div><div class="card-sub" style="color:var(--text2);font-size:13px;">Buy the Discovery Set.</div></div>
+        </div>
+      </div>
+
+      <!-- 03 REFERENCE ANALYSIS -->
+      <div class="section" id="s03">
+        <div class="section-eyebrow">03 · Reference Website Analysis</div>
+        <h1 class="section-title">Same premium feel, <em>sharper execution</em></h1>
+        <p class="section-sub">Xpresence wants a website in the same league as the shared reference site. We studied it closely for design direction, storytelling and feature set — this section is what we'll take inspiration from, and what we'll fix.</p>
+
+        <div class="block-title"><span class="dash"></span>What the reference does well</div>
+        <div class="grid-2">
+          <div class="tick-item"><span class="tick-mark">•</span>Premium perfume presentation &amp; emotional storytelling</div>
+          <div class="tick-item"><span class="tick-mark">•</span>Mood-based fragrance discovery</div>
+          <div class="tick-item"><span class="tick-mark">•</span>Clear fragrance-note communication</div>
+          <div class="tick-item"><span class="tick-mark">•</span>Strong Discovery Set positioning</div>
+          <div class="tick-item"><span class="tick-mark">•</span>Solid product education content</div>
+          <div class="tick-item"><span class="tick-mark">•</span>Trust cues — shipping, COD, secure payment</div>
+        </div>
+
+        <div class="block-title"><span class="dash"></span>Where it falls short — and what Xpresence will fix</div>
+        <div class="grid-2">
+          <div class="tick-item"><span class="tick-mark">→</span>Cluttered journeys with too many detours before purchase</div>
+          <div class="tick-item"><span class="tick-mark">→</span>No direct side-by-side comparison of its fragrances</div>
+          <div class="tick-item"><span class="tick-mark">→</span>Storytelling and shopping blur into each other</div>
+          <div class="tick-item"><span class="tick-mark">→</span>Repetitive content copy-pasted across product pages</div>
+          <div class="tick-item"><span class="tick-mark">→</span>Weak, inconsistent mobile CTA placement</div>
+          <div class="tick-item"><span class="tick-mark">→</span>Delivery &amp; return info buried, hard to find</div>
+          <div class="tick-item"><span class="tick-mark">→</span>Reviews scattered, not structured as social proof</div>
+          <div class="tick-item"><span class="tick-mark">→</span>Little to no gifting or bundle merchandising</div>
+        </div>
+
+        <div class="card accent-card" style="margin-top:14px;padding:16px 20px;"><div class="card-label">Bottom Line</div><div class="card-sub" style="color:var(--text2);font-size:13px;">Match the reference on premium look &amp; storytelling. Fix the gaps above. Use it for direction only — nothing copied.</div></div>
+      </div>
+
+      <!-- 04 PAGES & PRODUCT DESIGN -->
+      <div class="section" id="s04">
+        <div class="section-eyebrow">04 · Website Pages &amp; Product Design</div>
+        <h1 class="section-title">21 pages, <em>built around 4 SKUs</em></h1>
+        <p class="section-sub">Power, Focus and Warmth are three separate products with their own pages — not variants. The Discovery Set is the fourth SKU.</p>
+
+        <div class="mini-label">Core Pages</div>
+        <div class="grid-3">
+          <div class="page-item">Homepage</div><div class="page-item">Shop All</div><div class="page-item">About</div>
+          <div class="page-item">Gifting</div><div class="page-item">FAQ</div><div class="page-item">Contact</div>
+        </div>
+        <div class="mini-label">Product &amp; Discovery Pages</div>
+        <div class="grid-3">
+          <div class="page-item">Power PDP</div><div class="page-item">Focus PDP</div><div class="page-item">Warmth PDP</div>
+          <div class="page-item">Discovery Set PDP</div><div class="page-item">Compare Fragrances</div><div class="page-item">Ingredients Page</div>
+          <div class="page-item" style="grid-column:span 3;">How to Choose Your Xpresence</div>
+        </div>
+        <div class="mini-label">Shopping &amp; Account</div>
+        <div class="grid-3">
+          <div class="page-item">Search Results</div><div class="page-item">Cart Drawer</div><div class="page-item">Account Pages</div>
+        </div>
+        <div class="mini-label">Policy &amp; System</div>
+        <div class="grid-3">
+          <div class="page-item">Shipping Policy</div><div class="page-item">Return Policy</div><div class="page-item">Privacy Policy</div>
+          <div class="page-item">Terms</div><div class="page-item">404 Page</div>
+        </div>
+
+        <div class="block-title"><span class="dash"></span>Homepage — key sections</div>
+        <div class="grid-3">
+          <div class="page-item" style="font-size:11.5px;">1. Hero</div><div class="page-item" style="font-size:11.5px;">2. Brand Promise</div><div class="page-item" style="font-size:11.5px;">3. Fragrance Intro</div>
+          <div class="page-item" style="font-size:11.5px;">4. Choose Your Presence</div><div class="page-item" style="font-size:11.5px;">5. Comparison</div><div class="page-item" style="font-size:11.5px;">6. Discovery Set</div>
+          <div class="page-item" style="font-size:11.5px;">7. Why Xpresence</div><div class="page-item" style="font-size:11.5px;">8. Ingredients</div><div class="page-item" style="font-size:11.5px;">9. Founder Story</div>
+          <div class="page-item" style="font-size:11.5px;">10. Reviews</div><div class="page-item" style="font-size:11.5px;">11. Gifting</div><div class="page-item" style="font-size:11.5px;">12. UGC</div>
+          <div class="page-item" style="font-size:11.5px;">13. Trust Reassurance</div><div class="page-item" style="font-size:11.5px;">14. Newsletter</div><div class="page-item" style="font-size:11.5px;">15. Footer</div>
+        </div>
+        <p class="card-sub" style="margin-top:8px;">Kept tight and in this order to avoid unnecessary scroll depth.</p>
+
+        <div class="block-title"><span class="dash"></span>Product pages — Power / Focus / Warmth</div>
+        <div class="grid-2">
+          <div class="split-col">
+            <h5>Built &amp; ready at launch</h5>
+            <div class="tick-item"><span class="tick-mark">•</span>Gallery, video, price, size</div>
+            <div class="tick-item"><span class="tick-mark">•</span>Add to Cart with mobile sticky bar</div>
+            <div class="tick-item"><span class="tick-mark">•</span>Reviews &amp; product FAQs</div>
+            <div class="tick-item"><span class="tick-mark">•</span>Comparison with the other two perfumes</div>
+            <div class="tick-item"><span class="tick-mark">•</span>Discovery Set upsell</div>
+          </div>
+          <div class="split-col">
+            <h5>Pending client confirmation <span class="tag amber">Required</span></h5>
+            <div class="tick-item"><span class="tick-mark">•</span>Fragrance family &amp; notes</div>
+            <div class="tick-item"><span class="tick-mark">•</span>Mood, occasion, intensity, longevity</div>
+            <div class="tick-item"><span class="tick-mark">•</span>Ingredients &amp; how to use</div>
+            <div class="tick-item"><span class="tick-mark">•</span>Delivery / COD copy specifics</div>
+          </div>
+        </div>
+
+        <div class="block-title"><span class="dash"></span>Discovery Set page (3 × 10ml)</div>
+        <div class="tick-item"><span class="tick-mark">•</span>Introduces all three perfumes, comparison table, "how to use" section</div>
+        <div class="tick-item"><span class="tick-mark">•</span>Trial/travel/gifting angle only if approved; upsell path to 30 ml bottles</div>
+        <div class="card amber-card" style="margin-top:10px;"><div class="card-sub" style="font-size:12.5px;">No fragrance notes, ingredients or claims will be invented — all product-specific detail is client-confirmed.</div></div>
+      </div>
+
+      <!-- 04 DESIGN & DEVELOPMENT -->
+      <div class="section" id="s05">
+        <div class="section-eyebrow">05 · UX/UI Design &amp; Shopify Development</div>
+        <h1 class="section-title">Designed <em>mobile-first</em>, built to scale</h1>
+        <p class="section-sub">Most new visitors will discover Xpresence on mobile — the site is designed mobile-first, then adapted to tablet and desktop.</p>
+
+        <div class="block-title"><span class="dash"></span>Design scope</div>
+        <div class="grid-2">
+          <div class="tick-item"><span class="tick-mark">•</span>Brand consultation, competitor study, sitemap</div>
+          <div class="tick-item"><span class="tick-mark">•</span>Wireframes for all key templates</div>
+          <div class="tick-item"><span class="tick-mark">•</span>Colour, typography &amp; spacing system</div>
+          <div class="tick-item"><span class="tick-mark">•</span>Home, product, collection, cart-drawer design</div>
+          <div class="tick-item"><span class="tick-mark">•</span>Mobile, tablet &amp; desktop layouts</div>
+          <div class="tick-item"><span class="tick-mark">•</span>Two structured design-revision rounds</div>
+        </div>
+
+        <div class="block-title"><span class="dash"></span>Development scope</div>
+        <div class="grid-2">
+          <div class="tick-item"><span class="tick-mark">•</span>Shopify store config, responsive build</div>
+          <div class="tick-item"><span class="tick-mark">•</span>Setup of all 4 SKUs — inventory, pricing, metafields</div>
+          <div class="tick-item"><span class="tick-mark">•</span>Cart drawer, sticky Add to Cart, search</div>
+          <div class="tick-item"><span class="tick-mark">•</span>Product &amp; Discovery Set recommendations</div>
+          <div class="tick-item"><span class="tick-mark">•</span>Discounts, newsletter, customer accounts</div>
+          <div class="tick-item"><span class="tick-mark">•</span>Domain, payment &amp; shipping setup assistance</div>
+        </div>
+
+        <div class="block-title"><span class="dash"></span>Scalable product-info structure</div>
+        <div class="mini-label">Identity &amp; Specs</div>
+        <div class="grid-4">
+          <div class="page-item" style="font-size:11.5px;">Frag. name</div><div class="page-item" style="font-size:11.5px;">Bottle size</div><div class="page-item" style="font-size:11.5px;">Frag. family</div><div class="page-item" style="font-size:11.5px;">Notes</div>
+        </div>
+        <div class="mini-label">Sensory Profile</div>
+        <div class="grid-4">
+          <div class="page-item" style="font-size:11.5px;">Mood</div><div class="page-item" style="font-size:11.5px;">Occasion</div><div class="page-item" style="font-size:11.5px;">Intensity</div><div class="page-item" style="font-size:11.5px;">Longevity</div>
+        </div>
+        <div class="mini-label">Content &amp; Support</div>
+        <div class="grid-4">
+          <div class="page-item" style="font-size:11.5px;">Ingredients</div><div class="page-item" style="font-size:11.5px;">Usage</div><div class="page-item" style="font-size:11.5px;">Story</div><div class="page-item" style="font-size:11.5px;">FAQs</div>
+        </div>
+        <p class="card-sub" style="margin-top:8px;">Built once, reused for any fragrance added in future without rebuilding the template.</p>
+      </div>
+
+      <!-- 05 TRUST, CRO & INTEGRATIONS -->
+      <div class="section" id="s06">
+        <div class="section-eyebrow">06 · Trust, CRO &amp; Integrations</div>
+        <h1 class="section-title">Earning trust with <em>zero brand history</em></h1>
+        <p class="section-sub">Trust matters more for a brand new brand than an established one. Every element here is genuine — no fake reviews, invented awards or unsupported claims.</p>
+
+        <div class="block-title"><span class="dash"></span>Trust &amp; CRO</div>
+        <div class="mini-label">Trust Signals</div>
+        <div class="grid-2">
+          <div class="tick-item"><span class="tick-mark">•</span>Founder story, transparent product info</div>
+          <div class="tick-item"><span class="tick-mark">•</span>Secure payment, COD, shipping timelines</div>
+          <div class="tick-item"><span class="tick-mark">•</span>Return/refund policy, support details</div>
+          <div class="tick-item"><span class="tick-mark">•</span>Genuine reviews, UGC, product FAQs</div>
+        </div>
+        <div class="mini-label">Conversion Mechanics</div>
+        <div class="grid-2">
+          <div class="tick-item"><span class="tick-mark">•</span>Clear CTA hierarchy, sticky Add to Cart</div>
+          <div class="tick-item"><span class="tick-mark">•</span>Trust info placed close to the purchase CTA</div>
+          <div class="tick-item"><span class="tick-mark">•</span>Cart recommendations, gifting prompts</div>
+          <div class="tick-item"><span class="tick-mark">•</span>Analytics on views, Add to Cart, checkout, purchase</div>
+        </div>
+
+        <div class="block-title"><span class="dash"></span>Integrations</div>
+        <div class="mini-label">Payments &amp; Fulfilment</div>
+        <div class="grid-4">
+          <div class="page-item" style="font-size:11.5px;">Payment gateway</div><div class="page-item" style="font-size:11.5px;">COD</div><div class="page-item" style="font-size:11.5px;">Shipping partner</div><div class="page-item" style="font-size:11.5px;">PIN checker</div>
+        </div>
+        <div class="mini-label">Customer Communication</div>
+        <div class="grid-4">
+          <div class="page-item" style="font-size:11.5px;">WhatsApp</div><div class="page-item" style="font-size:11.5px;">Reviews platform</div><div class="page-item" style="font-size:11.5px;">Email marketing</div><div class="page-item" style="font-size:11.5px;">Abandoned cart</div>
+        </div>
+        <div class="mini-label">Analytics &amp; Tracking</div>
+        <div class="grid-4">
+          <div class="page-item" style="font-size:11.5px;">GA4</div><div class="page-item" style="font-size:11.5px;">GTM</div><div class="page-item" style="font-size:11.5px;">Meta Pixel</div><div class="page-item" style="font-size:11.5px;">Search Console</div>
+        </div>
+        <div class="card amber-card" style="margin-top:10px;"><div class="card-sub" style="font-size:12.5px;">Paid app and subscription charges are separate, billed directly by each provider.</div></div>
+      </div>
+
+      <!-- 06 SEO PERFORMANCE QA -->
+      <div class="section" id="s07">
+        <div class="section-eyebrow">07 · SEO, Performance &amp; Quality Assurance</div>
+        <h1 class="section-title">Tested before it <em>ever goes live</em></h1>
+        <div class="mini-label">SEO &amp; Performance</div>
+        <div class="grid-2">
+          <div class="tick-item"><span class="tick-mark">•</span>Mobile performance, image/video optimisation</div>
+          <div class="tick-item"><span class="tick-mark">•</span>SEO structure, meta titles, structured data</div>
+          <div class="tick-item"><span class="tick-mark">•</span>Descriptive image alt text</div>
+        </div>
+        <div class="mini-label">Testing &amp; QA</div>
+        <div class="grid-2">
+          <div class="tick-item"><span class="tick-mark">•</span>Basic accessibility, browser &amp; device testing</div>
+          <div class="tick-item"><span class="tick-mark">•</span>Cart, payment, COD, form &amp; discount testing</div>
+          <div class="tick-item"><span class="tick-mark">•</span>Analytics-event validation, broken-link testing</div>
+          <div class="tick-item"><span class="tick-mark">•</span>Final launch checklist before go-live</div>
+        </div>
+        <div class="card amber-card" style="margin-top:10px;"><div class="card-sub" style="font-size:12.5px;">We won't promise a specific Google PageSpeed score — third-party apps, tracking tools and uploaded media affect it after launch.</div></div>
+      </div>
+
+      <!-- 07 TIMELINE & DELIVERABLES -->
+      <div class="section" id="s08">
+        <div class="section-eyebrow">08 · Timeline &amp; Deliverables</div>
+        <h1 class="section-title">6-8 weeks, <em>start to launch</em></h1>
+        <p class="section-sub">Depends on timely access, assets and approvals from Xpresence at each stage.</p>
+
+        <div class="funnel">
+          <div class="funnel-stage" style="width:96%;"><span class="funnel-tag">WEEK 1</span><div class="funnel-title">Consultation &amp; Discovery</div><div class="funnel-desc">Requirements, reference study, sitemap</div></div>
+          <div class="funnel-arrow">▾</div>
+          <div class="funnel-stage" style="width:88%;"><span class="funnel-tag">WEEK 2</span><div class="funnel-title">Journey &amp; Content Planning</div><div class="funnel-desc">Wireframes, content planning</div></div>
+          <div class="funnel-arrow">▾</div>
+          <div class="funnel-stage" style="width:80%;"><span class="funnel-tag">WEEK 3</span><div class="funnel-title">UI Design</div><div class="funnel-desc">Visual design for key pages</div></div>
+          <div class="funnel-arrow">▾</div>
+          <div class="funnel-stage" style="width:71%;"><span class="funnel-tag">WEEKS 4-5</span><div class="funnel-title">Shopify Development</div><div class="funnel-desc">Build + setup of all 4 SKUs</div></div>
+          <div class="funnel-arrow">▾</div>
+          <div class="funnel-stage" style="width:63%;"><span class="funnel-tag">WEEK 6</span><div class="funnel-title">Integrations &amp; Optimisation</div><div class="funnel-desc">Analytics, mobile optimisation</div></div>
+          <div class="funnel-arrow">▾</div>
+          <div class="funnel-stage" style="width:55%;"><span class="funnel-tag">WEEK 7</span><div class="funnel-title">Quality Testing</div><div class="funnel-desc">QA, client review</div></div>
+          <div class="funnel-arrow">▾</div>
+          <div class="funnel-stage final" style="width:46%;"><span class="funnel-tag">WEEK 8</span><div class="funnel-title">Launch</div><div class="funnel-desc">Corrections, training, go-live</div></div>
+        </div>
+
+        <div class="block-title"><span class="dash"></span>Deliverables</div>
+        <div class="mini-label">Strategy &amp; Design</div>
+        <div class="grid-3">
+          <div class="page-item" style="font-size:11.5px;">Consultation &amp; sitemap</div><div class="page-item" style="font-size:11.5px;">Wireframes &amp; UI designs</div>
+        </div>
+        <div class="mini-label">Build</div>
+        <div class="grid-3">
+          <div class="page-item" style="font-size:11.5px;">Complete Shopify website</div><div class="page-item" style="font-size:11.5px;">4 SKUs live</div><div class="page-item" style="font-size:11.5px;">Discovery Set page</div>
+          <div class="page-item" style="font-size:11.5px;">Mobile optimisation</div>
+        </div>
+        <div class="mini-label">Launch &amp; Support</div>
+        <div class="grid-3">
+          <div class="page-item" style="font-size:11.5px;">Analytics setup</div><div class="page-item" style="font-size:11.5px;">SEO foundations</div><div class="page-item" style="font-size:11.5px;">Testing &amp; launch checklist</div>
+          <div class="page-item" style="font-size:11.5px;">Admin training</div><div class="page-item" style="font-size:11.5px;">Handover docs</div><div class="page-item" style="font-size:11.5px;">15-day bug support</div>
+        </div>
+      </div>
+
+      <!-- 08 COMMERCIAL PROPOSAL -->
+      <div class="section" id="s09">
+        <div class="section-eyebrow">09 · Commercial Proposal</div>
+        <h1 class="section-title">₹1,50,000 <em>+ GST</em></h1>
+        <p class="section-sub">A complete D2C strategy, design, development and launch engagement — not a basic Shopify setup, and not priced on an hourly-rate basis.</p>
+
+        <div class="price-card accent-card">
+          <div class="price-top"><div><div class="price-name">Total Professional Fee</div><div class="price-desc">Shopify website build, content &amp; copywriting, hosting setup, first-year domain registration, SEO foundations, 25 images, UX/UI design, integrations, analytics, testing, training and launch support.</div></div><div class="price-val">₹1,50,000 + GST</div></div>
+        </div>
+
+        <div class="block-title"><span class="dash"></span>What's included in ₹1,50,000</div>
+        <div class="grid-3">
+          <div class="page-item">Shopify Website Build</div>
+          <div class="page-item">Content &amp; Copywriting</div>
+          <div class="page-item">Hosting Setup</div>
+          <div class="page-item">Domain Name (Year 1)</div>
+          <div class="page-item">SEO Foundations</div>
+          <div class="page-item">25 Images</div>
+        </div>
+
+        <div class="block-title"><span class="dash"></span>Payment terms</div>
+        <div class="card accent-card" style="padding:18px 22px;">
+          <div class="card-label">Payment Structure</div>
+          <div class="card-value" style="font-size:17px;">100% one-time, before project start</div>
+          <div class="card-sub" style="color:var(--text2);font-size:13px;margin-top:6px;">The full project fee of ₹1,50,000 + GST is payable upfront, in a single payment, prior to the commencement of work. The consultation and discovery phase begins on receipt of payment.</div>
+        </div>
+
+        <div class="exclusion-box">
+          <div class="excl-title">Not included</div>
+          <div class="excl-row"><span class="excl-mark">–</span>Shopify's own monthly subscription fee &amp; paid app subscriptions (billed directly to Xpresence)</div>
+          <div class="excl-row"><span class="excl-mark">–</span>Domain renewal from year 2 onward (billed directly by the registrar)</div>
+          <div class="excl-row"><span class="excl-mark">–</span>Professional photography or videography beyond the 25 images included</div>
+          <div class="excl-row"><span class="excl-mark">–</span>Packaging design, logo or complete brand-identity creation</div>
+          <div class="excl-row"><span class="excl-mark">–</span>Large-scale content production (blogs, catalogue copy for future SKUs), influencer/UGC production</div>
+          <div class="excl-row"><span class="excl-mark">–</span>Payment-gateway &amp; shipping charges, features outside approved scope</div>
+        </div>
+      </div>
+
+      <!-- 10 WHY TROOPOD -->
+      <div class="section" id="s10">
+        <div class="section-eyebrow">10 · Why Troopod</div>
+        <h1 class="section-title">D2C growth partner, <em>proven across categories</em></h1>
+        <p class="section-sub">Troopod works as a CRO and growth partner to D2C brands across fragrance-adjacent, beauty, wellness and lifestyle categories in India — the same playbook of design, conversion and trust-building that shapes this proposal for Xpresence.</p>
+
+        <div class="deck-cta">
+          <div class="deck-cta-text">
+            <div class="card-label">Full Capability Deck</div>
+            <div class="card-value">See our process, work and case studies</div>
+            <div class="card-sub" style="color:var(--text2);">A complete walkthrough of how Troopod approaches D2C design, CRO and growth.</div>
+          </div>
+          <a class="cta-btn" href="https://troopoddeck.pages.dev/" target="_blank" rel="noopener">View Deck ↗</a>
+        </div>
+
+        <div class="block-title"><span class="dash"></span>Brands we've worked with</div>
+        <div class="grid-2">
+          <a class="brand-link" href="https://mybombae.in/pages/hairplay-pro" target="_blank" rel="noopener"><div class="brand-badge">B</div><div class="brand-info"><div class="brand-name">Bombae</div><div class="brand-sub">HairPlay Pro</div></div><span class="arrow">↗</span></a>
+          <a class="brand-link" href="https://bit.ly/fableroomxtroopod" target="_blank" rel="noopener"><div class="brand-badge">FR</div><div class="brand-info"><div class="brand-name">FableRoom</div></div><span class="arrow">↗</span></a>
+          <a class="brand-link" href="https://bit.ly/Durexxtroopod" target="_blank" rel="noopener"><div class="brand-badge">D</div><div class="brand-info"><div class="brand-name">Durex</div></div><span class="arrow">↗</span></a>
+          <a class="brand-link" href="https://www.miabytanishq.com/" target="_blank" rel="noopener"><div class="brand-badge">MT</div><div class="brand-info"><div class="brand-name">Mia by Tanishq</div></div><span class="arrow">↗</span></a>
+          <a class="brand-link" href="https://www.bombayshavingcompany.com/" target="_blank" rel="noopener"><div class="brand-badge">BSC</div><div class="brand-info"><div class="brand-name">Bombay Shaving Company</div></div><span class="arrow">↗</span></a>
+        </div>
+      </div>
+
+      <!-- 11 TERMS & CONDITIONS -->
+      <div class="section" id="s11">
+        <div class="section-eyebrow">11 · Terms &amp; Conditions</div>
+        <h1 class="section-title">Scope, revisions <em>&amp; responsibilities</em></h1>
+        <p class="section-sub">The key terms of this engagement, at a glance.</p>
+
+        <div class="mini-label">Revisions &amp; Scope Control</div>
+        <div class="grid-2">
+          <div class="term-card"><div class="t-title"><span class="t-num">01</span>Revision Rounds</div><div class="t-desc">2 UI design-revision rounds + 1 dev/UAT correction round included.</div></div>
+          <div class="term-card"><div class="t-title"><span class="t-num">02</span>Bug Fixes</div><div class="t-desc">Covered for 15 days after launch.</div></div>
+          <div class="term-card"><div class="t-title"><span class="t-num">03</span>Out-of-Scope Work</div><div class="t-desc">New pages/features beyond the shared SOW, or changes to approved designs, billed separately.</div></div>
+          <div class="term-card"><div class="t-title"><span class="t-num">04</span>Feedback Format</div><div class="t-desc">Shared in a single, consolidated round per stage.</div></div>
+        </div>
+
+        <div class="mini-label">Client Responsibilities</div>
+        <div class="grid-2">
+          <div class="term-card"><div class="t-title"><span class="t-num">05</span>Access &amp; Guidelines</div><div class="t-desc">Shopify access, logo, brand guidelines, final prices.</div></div>
+          <div class="term-card"><div class="t-title"><span class="t-num">06</span>Product Claims<span class="tag amber">Required</span></div><div class="t-desc">Fragrance notes, ingredients &amp; claims confirmed before pages go live.</div></div>
+          <div class="term-card"><div class="t-title"><span class="t-num">07</span>Copy &amp; Images</div><div class="t-desc">Troopod drafts copy + 25 images; client approves. Extra photos/videos welcome if available.</div></div>
+          <div class="term-card"><div class="t-title"><span class="t-num">08</span>Policies &amp; Support</div><div class="t-desc">Shipping/return rules, gateway details, legal policies, support info.</div></div>
+          <div class="term-card" style="grid-column:span 2;"><div class="t-title"><span class="t-num">09</span>Timely Feedback</div><div class="t-desc">Needed to hold the 6-8 week timeline — delays on Xpresence's side shift the timeline proportionally.</div></div>
+        </div>
+
+        <div class="mini-label">Ownership &amp; General</div>
+        <div class="grid-2">
+          <div class="term-card"><div class="t-title"><span class="t-num">10</span>Ownership Transfer</div><div class="t-desc">Design &amp; theme code transfer on full payment and formal handover.</div></div>
+          <div class="term-card"><div class="t-title"><span class="t-num">11</span>No Outcome Guarantee</div><div class="t-desc">Revenue, conversion or PageSpeed outcomes are not guaranteed.</div></div>
+          <div class="term-card" style="grid-column:span 2;"><div class="t-title"><span class="t-num">12</span>Proposal Validity</div><div class="t-desc">Dated 10 September 2026, valid for 15 days — pricing &amp; scope subject to review after.</div></div>
+        </div>
+      </div>
+
+      <!-- 10 NEXT STEPS -->
+      <div class="section" id="s12">
+        <div class="section-eyebrow">12 · Conclusion &amp; Next Steps</div>
+        <h1 class="section-title">Let's launch <em>Xpresence</em>, the right way</h1>
+        <p style="font-size:13.5px;color:var(--text2);line-height:1.75;margin-bottom:24px;max-width:660px;">The goal is a premium, trustworthy, easy-to-use Shopify website that helps customers understand Power, Focus and Warmth, choose confidently, and check out smoothly.</p>
+
+        <div class="tick-item"><span class="tick-mark">01</span>Approve the proposal</div>
+        <div class="tick-item"><span class="tick-mark">02</span>Confirm the project scope</div>
+        <div class="tick-item"><span class="tick-mark">03</span>Complete the one-time payment (100%)</div>
+        <div class="tick-item"><span class="tick-mark">04</span>Share required assets and access</div>
+        <div class="tick-item"><span class="tick-mark">05</span>Begin the consultation and discovery phase</div>
+
+        <div class="card accent-card" style="margin-top:18px;padding:16px 20px;">
+          <div class="card-label">Right After Go-Ahead</div>
+          <div class="card-sub" style="color:var(--text2);font-size:13px;">Once the project is confirmed, Troopod will share a <b style="color:var(--text)">detailed Scope of Work</b> with a complete, week-by-week roadmap covering the full <b style="color:var(--text)">2-month</b> timeline — so Xpresence has full visibility into every milestone from day one.</div>
+        </div>
+
+        <div class="footer-note">Troopod × Xpresence — Shopify Website Proposal · Dated 10 September 2026 · Valid 15 days from this date</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('overlay').classList.toggle('open');
+  }
+  function show(id, el) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    if (el) el.classList.add('active');
+    window.scrollTo({top: 0, behavior: 'smooth'});
+    if (window.innerWidth <= 768) toggleSidebar();
+  }
+</script>
+</body>
+</html>
